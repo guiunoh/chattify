@@ -1,0 +1,10 @@
+### macOS ###
+.DS_Store
+### GoLand ###
+.idea/
+### VisualStudioCode ###
+.vscode/
+
+thumbnail.png
+cover.html
+coverage.out

@@ -1,0 +1,12 @@
+profile: local
+service:
+    port: 9002
+db:
+    endpoint: localhost:3306
+    name: chattify
+    user: chattify
+    password: pass!@
+rdb:
+    endpoint: localhost:6379
+    password: ""
+    db: 0

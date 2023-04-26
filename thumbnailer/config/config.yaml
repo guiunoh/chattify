@@ -1,0 +1,7 @@
+profile: local
+service:
+    port: 9003
+rdb:
+    endpoint: localhost:6379
+    password: ""
+    db: 0

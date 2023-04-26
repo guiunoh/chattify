@@ -1,0 +1,9 @@
+profile: local
+service:
+    channel: publish-channel
+forward:
+    endpoint: http://localhost:9001/api/v1/notification
+rdb:
+    endpoint: localhost:6379
+    password: ""
+    db: 0

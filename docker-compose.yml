@@ -1,0 +1,66 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:latest
+    # NOTE: use of "mysql_native_password" is not recommended: https://dev.mysql.com/doc/refman/8.0/en/upgrading-from-previous-series.html#upgrade-caching-sha2-password
+    # (this is just an example, not intended to be a production configuration)
+    command:
+      - --default-authentication-plugin=mysql_native_password
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    restart: always
+    volumes:
+      - ./ops/init.database:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: chattify
+      MYSQL_USER: chattify
+      MYSQL_PASSWORD: pass!@
+      MYSQL_RANDOM_ROOT_PASSWORD: true
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  consumer:
+    build:
+      context: ./consumer
+      dockerfile: Dockerfile
+    environment:
+      FORWARD_ENDPOINT: http://notifier:9001/api/v1/notification
+      RDB_ENDPOINT: redis:6379
+    depends_on: [ redis ]
+
+  notifier:
+    build:
+      context: ./notifier
+      dockerfile: Dockerfile
+    ports:
+      - "9001:9001"
+    environment:
+      RDB_ENDPOINT: redis:6379
+    depends_on: [ redis ]
+
+  publisher:
+    build:
+      context: ./publisher
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "9002:9002"
+    environment:
+      DB_ENDPOINT: mysql:3306
+      RDB_ENDPOINT: redis:6379
+    depends_on: [ mysql, redis ]
+
+  thumbnailer:
+    build:
+      context: ./thumbnailer
+      dockerfile: Dockerfile
+    ports:
+      - "9003:9003"
+    environment:
+      RDB_ENDPOINT: redis:6379
+    depends_on: [ redis ]
