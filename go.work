@@ -1,7 +1,8 @@
 go 1.20
 
 use (
-	consumer
+	consumer-gone
+	consumer-forward
 	notifier
 	publisher
 	thumbnailer

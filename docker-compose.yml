@@ -24,15 +24,6 @@ services:
     ports:
       - "6379:6379"
 
-  consumer:
-    build:
-      context: ./consumer
-      dockerfile: Dockerfile
-    environment:
-      FORWARD_ENDPOINT: http://notifier:9001/api/v1/notification
-      RDB_ENDPOINT: redis:6379
-    depends_on: [ redis ]
-
   notifier:
     build:
       context: ./notifier
@@ -62,5 +53,14 @@ services:
     ports:
       - "9003:9003"
     environment:
+      RDB_ENDPOINT: redis:6379
+    depends_on: [ redis ]
+
+  consumer-forward:
+    build:
+      context: ./consumer-forward
+      dockerfile: Dockerfile
+    environment:
+      FORWARD_ENDPOINT: http://notifier:9001/api/v1/notification
       RDB_ENDPOINT: redis:6379
     depends_on: [ redis ]
